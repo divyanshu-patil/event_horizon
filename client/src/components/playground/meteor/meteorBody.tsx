@@ -33,7 +33,7 @@ export function MeteorBody({
   const elapsedRef = useRef(0);
   const doneRef = useRef(false);
 
-  const { timeScale, sizeScale } = useMeteorSim();
+  const { timeScale, sizeScale, paused } = useMeteorSim();
 
   const { positionAt, impactT, hasImpact, tEnd } = useMeteorPath(pathInput);
 
@@ -44,7 +44,7 @@ export function MeteorBody({
   useFrame((_, delta) => {
     if (!meshRef.current || doneRef.current) return;
 
-    const dt = delta * timeScale;
+    const dt = paused ? 0 : delta * timeScale;
     tRef.current += dt;
     elapsedRef.current += dt;
 
