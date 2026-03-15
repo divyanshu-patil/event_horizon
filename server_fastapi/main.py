@@ -42,10 +42,11 @@ app.add_middleware(LoggingMiddleware)
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allow_headers=["Content-Type","Authorization","ngrok-skip-browser-warning"],
+    allow_origins=[
+        "*"
+    ],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Events on startup and shutdown

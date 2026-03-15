@@ -21,7 +21,9 @@ def serialize_doc(doc):
 async def handle_search_event(
     searchQuery: Optional[str] = None,
     start_date: Optional[str] = None,
-    end_date: Optional[str] = None
+    end_date: Optional[str] = None,
+    shower: Optional[str] = None,
+    region: Optional[str] = None
 ) -> List[Dict]:
     """
     Search for events by shower code or region, optionally filtered by date range
@@ -42,10 +44,11 @@ async def handle_search_event(
             try:
                 start_dt = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
                 end_dt = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
-                query["date"] = {"$gte": start_dt, "$lte": end_dt}
+                query["date"] = {"$gte": start_date, "$lte": end_date}
             except ValueError as e:
                 raise HTTPException(status_code=400, detail=f"Invalid date format: {str(e)}")
-        
+        if region:
+            
         # Find events
         events = []
         
