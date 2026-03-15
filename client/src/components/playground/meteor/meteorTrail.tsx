@@ -137,7 +137,7 @@ export function MeteorTrail({
     camera.getWorldPosition(camPos);
 
     const sphereGeo = meteor.geometry as THREE.SphereGeometry;
-    const HEAD_WIDTH = sphereGeo.parameters.radius * meteor.scale.x * 2;
+    const HEAD_WIDTH = sphereGeo.parameters.radius * meteor.scale.x * 3;
 
     for (let i = 0; i < n; i++) {
       const t = i / (n - 1);

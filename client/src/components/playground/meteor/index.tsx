@@ -16,7 +16,6 @@ export interface MeteorProps extends MeteorPathInput {
 export function Meteor({
   color = "#ff6a00",
   showPath = true,
-  speedMultiplier = 1,
   loop = false,
   ...pathInput
 }: MeteorProps) {
@@ -25,12 +24,7 @@ export function Meteor({
       {showPath && (
         <MeteorPath {...pathInput} color={color} fade opacity={0.4} />
       )}
-      <MeteorBody
-        {...pathInput}
-        color={color}
-        speedMultiplier={speedMultiplier}
-        loop={loop}
-      />
+      <MeteorBody {...pathInput} color={color} loop={loop} />
     </group>
   );
 }
