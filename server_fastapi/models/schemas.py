@@ -3,29 +3,19 @@ from typing import Optional
 from datetime import datetime
 
 # Event Schemas
-class Radiant(BaseModel):
-    ra: float
-    dec: float
-
-class Event(BaseModel):
-    event_id: str
-    datetime_utc: datetime
-    shower_code: str
-    station_count: int
-    peak_magnitude: float
-    approx_velocity: float
-    region: str
-    radiant: Radiant
-
 class EventResponse(BaseModel):
-    event_id: str
-    datetime_utc: datetime
-    shower_code: str
-    station_count: int
-    peak_magnitude: float
-    approx_velocity: float
+    name: str
+    date: str
+    peakMagnitude: float
+    velocity: float  # km/s
     region: str
-    radiant: Radiant
+    network: str
+    shower: str
+    altitude: float  # km
+    duration: float  # seconds
+    mass: float  # grams
+    lat: float
+    lng: float
 
 # Station Schemas
 class Location(BaseModel):

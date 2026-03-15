@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Query, HTTPException
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
+from models.schemas import EventResponse
 from controllers.events import handle_search_event
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("/", response_model=List[EventResponse])
 async def search_event(
     searchQuery: Optional[str] = Query(None),
     start: Optional[str] = Query(None),

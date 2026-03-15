@@ -1,13 +1,43 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from dotenv import load_dotenv
 import os
+import logging
+from datetime import datetime
 from routers import event, station, trajectory
 from database import connect_db, close_db, is_connected
 
 load_dotenv()
 
+# Configure logging
+log_file = os.path.join(os.path.dirname(__file__), "..", "log.txt")
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(log_file),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
 app = FastAPI(title="Event Horizon API", version="1.0.0")
+
+# Request logging middleware
+class LoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # Log incoming request
+        logger.info(f"METHOD: {request.method} | PATH: {request.url.path} | CLIENT: {request.client.host if request.client else 'Unknown'}")
+        
+        response = await call_next(request)
+        
+        # Log response status
+        logger.info(f"RESPONSE: {response.status_code} | METHOD: {request.method} | PATH: {request.url.path}")
+        
+        return response
+
+app.add_middleware(LoggingMiddleware)
 
 # CORS Middleware
 app.add_middleware(
@@ -15,7 +45,7 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allow_headers=["Content-Type"],
+    allow_headers=["Content-Type","Authorization","ngrok-skip-browser-warning"],
 )
 
 # Events on startup and shutdown

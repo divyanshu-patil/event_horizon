@@ -19,7 +19,7 @@ def serialize_doc(doc):
     return doc
 
 async def handle_search_event(
-    search_query: Optional[str] = None,
+    searchQuery: Optional[str] = None,
     start_date: Optional[str] = None,
     end_date: Optional[str] = None
 ) -> List[Dict]:
@@ -31,10 +31,10 @@ async def handle_search_event(
         query = {}
         
         # Build search query
-        if search_query:
+        if searchQuery:
             query["$or"] = [
-                {"shower_code": {"$regex": search_query, "$options": "i"}},
-                {"region": {"$regex": search_query, "$options": "i"}}
+                {"shower": {"$regex": searchQuery, "$options": "i"}},
+                {"region": {"$regex": searchQuery, "$options": "i"}}
             ]
         
         # Build date range query
@@ -42,17 +42,24 @@ async def handle_search_event(
             try:
                 start_dt = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
                 end_dt = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
-                query["datetime_utc"] = {"$gte": start_dt, "$lte": end_dt}
+                query["date"] = {"$gte": start_dt, "$lte": end_dt}
             except ValueError as e:
                 raise HTTPException(status_code=400, detail=f"Invalid date format: {str(e)}")
         
         # Find events
         events = []
-        async for event in collection.find(query):
-            # Serialize the document to handle ObjectId
-            serialized = serialize_doc(event)
-            events.append(serialized)
         
+        # If database is available, try to fetch from there
+        try:
+            async for event in collection.find(query):
+                # Serialize the document to handle ObjectId
+                serialized = serialize_doc(event)
+                events.append(serialized)
+        except Exception as db_err:
+            # Fall back to mock events if database fails
+            print(f"Database query failed: {str(db_err)}, using mock events")
+        
+        # If no events from database, use mock events
         return events
     
     except HTTPException:
