@@ -4,6 +4,7 @@ from datetime import datetime
 
 # Event Schemas
 class EventResponse(BaseModel):
+    id: str  # MongoDB _id
     name: str
     date: str
     peakMagnitude: float
