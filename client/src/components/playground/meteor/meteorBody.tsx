@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useMeteorPath, MeteorPathInput } from "./useMeteorPath";
@@ -6,6 +6,7 @@ import { MeteorTrail } from "./meteorTrail";
 import { useMeteorSim } from "@/context/MeteorSimContext";
 
 interface MeteorBodyProps extends MeteorPathInput {
+  id?: string;
   color?: string;
   emissiveIntensity?: number;
   massToRadius?: (mass: number) => number;
@@ -19,6 +20,7 @@ interface MeteorBodyProps extends MeteorPathInput {
 const defaultMassToRadius = (mass: number) => Math.cbrt(Math.abs(mass)) * 0.3;
 
 export function MeteorBody({
+  id,
   color = "#ff4500",
   emissiveIntensity = 2,
   massToRadius = defaultMassToRadius,
@@ -33,7 +35,7 @@ export function MeteorBody({
   const elapsedRef = useRef(0);
   const doneRef = useRef(false);
 
-  const { timeScale, sizeScale } = useMeteorSim();
+  const { timeScale, sizeScale, paused } = useMeteorSim();
 
   const { positionAt, impactT, hasImpact, tEnd } = useMeteorPath(pathInput);
 
@@ -41,10 +43,18 @@ export function MeteorBody({
 
   const initRadius = defaultMassToRadius(pathInput.m0);
 
+  useEffect(() => {
+    if (!meshRef.current) return;
+    meshRef.current.userData.isMeteor = true;
+    meshRef.current.userData.meteorId = id ?? "unknown";
+    meshRef.current.userData.mass = pathInput.m0;
+    meshRef.current.userData.color = color;
+  }, [id, pathInput.m0, color]);
+
   useFrame((_, delta) => {
     if (!meshRef.current || doneRef.current) return;
 
-    const dt = delta * timeScale;
+    const dt = paused ? 0 : delta * timeScale;
     tRef.current += dt;
     elapsedRef.current += dt;
 
