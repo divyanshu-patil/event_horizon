@@ -2,18 +2,19 @@ import { IMeteorTrajectory } from "@/types/api/meteor";
 import { apiClient } from "../apiClient";
 import { MeteorEvent } from "@/data/meteorEvents";
 
+export type MeteorTrajResponse = IMeteorTrajectory & { traj_id: string };
 export const getMeteorTrajectory = async (
   id?: string,
-): Promise<IMeteorTrajectory | null> => {
+): Promise<MeteorTrajResponse | null> => {
   try {
-    const response = await apiClient.get("/trajectory", {
+    const response = await apiClient.get("/trajectory/", {
       params: {
         ...(id && { event_id: id }),
       },
     });
 
     console.log(response.data);
-    return response.data as IMeteorTrajectory;
+    return response.data as MeteorTrajResponse;
   } catch (e) {
     console.error(e);
   }

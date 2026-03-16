@@ -17,6 +17,7 @@ import {
   getMeteorTrajectoryByTrajId,
   getRandomMeteorTrajectory,
   MeteorTrajByIdResponse,
+  MeteorTrajResponse,
 } from "@/lib/api/meteor";
 import { IMeteorTrajectory } from "@/types/api/meteor";
 import { useSearchParams } from "next/navigation";
@@ -214,7 +215,15 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 // ─── Hit info tooltip ─────────────────────────────────────────────────────────
-function HitTooltip({ hit, onClose }: { hit: HitInfo; onClose: () => void }) {
+function HitTooltip({
+  hit,
+  onClose,
+  trajectoryId,
+}: {
+  hit: HitInfo;
+  onClose: () => void;
+  trajectoryId?: string;
+}) {
   const [state, setState] = useState<{
     data: MeteorTrajByIdResponse | null;
     loading: boolean;
@@ -226,14 +235,16 @@ function HitTooltip({ hit, onClose }: { hit: HitInfo; onClose: () => void }) {
     let cancelled = false;
 
     console.log(hit.trajId);
-    getMeteorTrajectoryByTrajId(hit.trajId).then((data) => {
+    console.log(trajectoryId);
+    const fetchId = trajectoryId ?? hit.trajId;
+    getMeteorTrajectoryByTrajId(fetchId).then((data) => {
       if (!cancelled) setState({ data, loading: false });
     });
 
     return () => {
       cancelled = true;
     };
-  }, [hit.trajId]);
+  }, [hit.trajId, trajectoryId]);
 
   return (
     <div
@@ -346,6 +357,8 @@ function PlayGroundInner() {
   const [isSimOpen, setIsSimOpen] = useState(true);
   const [hitInfo, setHitInfo] = useState<HitInfo | null>(null);
   const [animateEarth, setAnimateEarth] = useState(true);
+  const [currentTrajectory, setCurrentTrajectory] =
+    useState<MeteorTrajResponse | null>(null);
 
   const searchParams = useSearchParams();
   const eventId = searchParams.get("event") ?? undefined;
@@ -355,8 +368,11 @@ function PlayGroundInner() {
     const load = async () => {
       if (hasEventId) {
         const data = await getMeteorTrajectory(eventId);
+        setCurrentTrajectory(data);
         if (data)
           setMeteorData((prev) => [...prev, trajectoryToMeteorData(data)]);
+      } else {
+        setCurrentTrajectory(null);
       }
     };
     load();
@@ -400,7 +416,13 @@ function PlayGroundInner() {
       <Loader />
 
       {/* ── Hit tooltip ── */}
-      {hitInfo && <HitTooltip hit={hitInfo} onClose={() => setHitInfo(null)} />}
+      {hitInfo && (
+        <HitTooltip
+          hit={hitInfo}
+          onClose={() => setHitInfo(null)}
+          trajectoryId={currentTrajectory?.traj_id}
+        />
+      )}
 
       {/* ── Overlay UI ── */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 min-w-64 max-w-sm w-full px-2">

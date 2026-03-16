@@ -90,4 +90,3 @@ dmypy.json
 
 ../log.txt
 .vercel
-.env*.local
