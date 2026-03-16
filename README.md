@@ -1,6 +1,6 @@
 # Horizon — Meteor Trajectory Analysis & Visualisation
 
-> ORION Astrathon 2025 submission — Full-stack web application for exploring real meteor events from the Global Meteor Network.
+> ORION Astrathon 2026 submission — Full-stack web application for exploring real meteor events from the Global Meteor Network.
 
 ---
 
