@@ -7,6 +7,7 @@ import logging
 from datetime import datetime
 from routers import event, station, trajectory, velocity_curve
 from database import connect_db, close_db, is_connected
+# from mangum import Mangum
 
 load_dotenv()
 
@@ -85,7 +86,4 @@ async def api_health():
         "status": "ok",
         "mongodb_connected": is_connected()
     }
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+# handler = Mangum(app)
