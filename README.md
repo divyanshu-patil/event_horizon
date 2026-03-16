@@ -157,8 +157,8 @@ The trajectory is converted into **3D coordinates** and animated across Earth.
 ## 1. Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/meteor-project.git
-cd meteor-project
+git clone https://github.com/divyanshu-patil/event_horizon.git
+cd event_horizon
 ```
 
 ---
@@ -168,7 +168,7 @@ cd meteor-project
 ## Create Virtual Environment (MacOS / Linux)
 
 ```bash
-cd server
+cd server_fastapi
 
 python3 -m venv venv
 source venv/bin/activate
@@ -289,24 +289,6 @@ Features:
 - Atmospheric lighting
 - Ground context provider
 - Real-time meteor animation
-
----
-
-# 📦 Deployment
-
-## Deploy Frontend (Vercel)
-
-From the `client` directory:
-
-```bash
-vercel
-```
-
-Or connect the repo in the **Vercel dashboard** and set:
-
-```
-Root Directory = client
-```
 
 ---
 
