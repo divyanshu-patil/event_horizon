@@ -75,8 +75,9 @@ meteor_events.json → FastAPI → Frontend
 
 **Frontend**
 - Next.js
-- Cesium.js / Three.js — 3D globe
-- Chart.js — velocity charts
+- Three.js — 3D globe
+- radix ui
+- tailwindcss
 
 ---
 
